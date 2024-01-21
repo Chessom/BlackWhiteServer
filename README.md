@@ -1,3 +1,3 @@
-This is the server for BlackWhite.
-Usage:
-server <port> [<port> ...]
+This is the server for BlackWhite.  
+Usage:  
+> server &lt;port&gt; [&lt;port&gt; ...]
