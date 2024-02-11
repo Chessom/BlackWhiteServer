@@ -1,21 +1,34 @@
-#pragma once
+﻿#pragma once
 #include"stdafx.h"
 #include"room.h"
 #include"message.hpp"
 namespace bw::server {
-	class gamer :public basic_gamer, std::enable_shared_from_this<gamer> {
+	class gamer :public basic_gamer, public std::enable_shared_from_this<gamer> {
 	public:
 		using socket_t = boost::asio::ip::tcp::socket;
-		gamer(socket_t socket,room_ptr room_p);
+		gamer(socket_t socket, room_ptr room_p, int gamer_id);
 		virtual void deliver(const message&);
-		void broadcast(const message&);
-		void start();
-		void join(room_ptr room_p);
-		void leave();
-		void stop();
-		void home();
+		virtual void broadcast(const message&);
+		virtual void start();
+		virtual void join(room_ptr room_p);
+		virtual void leave();
+		virtual void stop();
+		virtual void home();
+		virtual void logout();
+		virtual room_ptr current_room() { return room_; }
+		bool in_hall() {
+			if (room_ != nullptr) {
+				return room_->is_default();
+			}
+			else{
+				room_ = hall_;
+				return true;
+			}
+		}
+		virtual ~gamer() { spdlog::info("ID:{} Name:{} gamer left the server.", id, name); }
+		const int sizelen = 5;
 	private:
-		inline void handle_msg(const message&);
+		virtual inline void handle_msg(const message&);
 		boost::asio::awaitable<void> reader();
 		boost::asio::awaitable<void> writer();
 		std::deque<message> write_msg_queue;

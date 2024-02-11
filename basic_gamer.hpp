@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"message.hpp"
 namespace bw::server {
 	namespace gamer_st {
@@ -19,7 +19,7 @@ namespace bw::server {
 		std::string name;
 		int state = gamer_st::free;
 		int id = -1;
-		int authority = ordinary;
+		int authority = anonymous;
 		enum { admin, ordinary, anonymous, limited };
 	};
 	using basic_gamer_ptr = std::shared_ptr<basic_gamer>;

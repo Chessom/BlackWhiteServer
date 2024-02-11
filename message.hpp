@@ -15,40 +15,42 @@ namespace bw {
 		std::string content;
 		int target_type = g;
 		int id1, id2;
+		std::string name;
 		enum { r, g, n };
 	};
-	REFLECTION(str_msg, content, target_type, id1, id2);
+	REFLECTION(str_msg, content, target_type, id1, id2, name);
 	struct game_msg {
 		int mode;
 		std::string movestr, board;
 	};
 	REFLECTION(game_msg, mode, movestr, board);
 	enum { success, failed };
+	struct get_msg {
+		std::string get_type;
+		std::vector<int> ids;
+	};
+	REFLECTION(get_msg, get_type, ids);
 	struct ret_msg {
 		int value = failed;
+		std::string ret_type;
 		std::string ret_str;
 	};
-	REFLECTION(ret_msg, value, ret_str);
+	REFLECTION(ret_msg, value, ret_type, ret_str);
 
 	class message {
 	public:
-		enum { invalid, str, game, control, ret };
+		enum { invalid, str, game, control, get, ret };
 		message() = default;
-		template<typename T>
-		message(T&& obj, int message_type = invalid) {
-			iguana::refletable_v<control_msg>;
-			iguana::to_json(std::forward<T>(obj), jsonstr);
-			type = message_type;
-		}
-		template<typename T>
-		void reload(T&& obj, int message_type = invalid) {
-			jsonstr = "";
-			type = message_type;
-			iguana::to_json(std::forward<T>(obj), jsonstr);
-		}
 		std::string jsonstr;
 		int type = invalid;
 	};
 	REFLECTION(message, jsonstr, type);
 	using msg_t = message;
+	template<typename T>
+	msg_t wrap(T&& obj, int message_type = msg_t::invalid) {
+		msg_t temp;
+		iguana::to_json(obj, temp.jsonstr);
+		temp.type = message_type;
+		return temp;
+	}
 }
