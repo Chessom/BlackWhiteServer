@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\games">
+      <UniqueIdentifier>{0dd23f84-89c5-4138-b97e-4d483297a872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\room">
+      <UniqueIdentifier>{cc7d3e79-03a7-4b98-a65b-2d11dfc572d0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="server.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hall.hpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gamer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="user.h">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="room.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_user.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="admin.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="othello_room.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BlackWhite\include\net\message.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="othello.hpp">
+      <Filter>头文件\games</Filter>
+    </ClInclude>
+    <ClInclude Include="room.h">
+      <Filter>头文件\room</Filter>
+    </ClInclude>
+    <ClInclude Include="room_info.h">
+      <Filter>头文件\room</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_game.hpp">
+      <Filter>头文件\games</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
