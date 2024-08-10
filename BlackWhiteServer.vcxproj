@@ -72,10 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ExternalIncludePath>C:\Program Files %28x86%29\yaLanTingLibs\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>D:\Projects\CppProjects\BlackWhite\include\net;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Projects\CppProjects\BlackWhiteServer\include;D:\Projects\CppProjects\BlackWhite\include\net</IncludePath>
+    <SourcePath>D:\Projects\CppProjects\BlackWhiteServer\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>C:\Program Files %28x86%29\yaLanTingLibs\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <IncludePath>D:\Projects\CppProjects\BlackWhiteServer\include;D:\Projects\CppProjects\BlackWhite\include\net</IncludePath>
+    <SourcePath>D:\Projects\CppProjects\BlackWhiteServer\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
@@ -159,25 +162,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gamer.cpp">
-      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDebugDLL</RuntimeLibrary>
-    </ClCompile>
-    <ClCompile Include="user.h" />
-    <ClCompile Include="hall.hpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="room.cpp" />
-    <ClCompile Include="server.cpp" />
+    <ClInclude Include="..\BlackWhite\include\net\message.hpp" />
+    <ClInclude Include="include\admin.hpp" />
+    <ClInclude Include="include\basic_game.hpp" />
+    <ClInclude Include="include\basic_user.hpp" />
+    <ClInclude Include="include\hall.hpp" />
+    <ClInclude Include="include\othello.hpp" />
+    <ClInclude Include="include\othello_room.hpp" />
+    <ClInclude Include="include\room.h" />
+    <ClInclude Include="include\room_info.h" />
+    <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\user.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\BlackWhite\include\net\message.hpp" />
-    <ClInclude Include="admin.hpp" />
-    <ClInclude Include="basic_game.hpp" />
-    <ClInclude Include="basic_user.hpp" />
-    <ClInclude Include="othello.hpp" />
-    <ClInclude Include="othello_room.hpp" />
-    <ClInclude Include="room.h" />
-    <ClInclude Include="room_info.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClCompile Include="src\gamer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\room.cpp" />
+    <ClCompile Include="src\server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

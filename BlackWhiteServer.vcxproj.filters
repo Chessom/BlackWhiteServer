@@ -21,52 +21,52 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="server.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="hall.hpp">
-      <Filter>头文件</Filter>
-    </ClCompile>
-    <ClCompile Include="gamer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="user.h">
-      <Filter>头文件</Filter>
-    </ClCompile>
-    <ClCompile Include="room.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="basic_user.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="admin.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="othello_room.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\BlackWhite\include\net\message.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="othello.hpp">
+    <ClInclude Include="include\admin.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\basic_user.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hall.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\othello_room.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\user.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\basic_game.hpp">
       <Filter>头文件\games</Filter>
     </ClInclude>
-    <ClInclude Include="room.h">
-      <Filter>头文件\room</Filter>
-    </ClInclude>
-    <ClInclude Include="room_info.h">
-      <Filter>头文件\room</Filter>
-    </ClInclude>
-    <ClInclude Include="basic_game.hpp">
+    <ClInclude Include="include\othello.hpp">
       <Filter>头文件\games</Filter>
     </ClInclude>
+    <ClInclude Include="include\room.h">
+      <Filter>头文件\room</Filter>
+    </ClInclude>
+    <ClInclude Include="include\room_info.h">
+      <Filter>头文件\room</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\gamer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\room.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
