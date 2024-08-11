@@ -21,6 +21,7 @@ namespace bw::server {
 		int state = user_st::free;
 		int id = -1;
 		int authority = anonymous;
+		enum { admin_id = 0 };
 		enum { admin, ordinary, anonymous, limited };
 	};
 	using basic_user_ptr = std::shared_ptr<basic_user>;

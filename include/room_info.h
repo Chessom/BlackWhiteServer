@@ -4,7 +4,7 @@ namespace bw::server {
 	class room_info {
 	public:
 		room_info() = default;
-		room_info(int room_id, int room_owner, std::string room_name, int room_state) :id(room_id), owner(room_owner), name(room_name), state(room_state) {};
+		room_info(int room_id, int room_owner = 0, std::string room_name = "Default", int room_state = none) :id(room_id), owner(room_owner), name(room_name), state(room_state) {};
 		int id = -1, owner = 0;
 		std::string name = "Default";
 		int state = none;

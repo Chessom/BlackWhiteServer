@@ -1,4 +1,4 @@
-#include"user.h"
+﻿#include"user.h"
 bw::server::user::user(socket_t socket, room_ptr room_p, int user_id)
 	:sock(std::move(socket)), room_(room_p), hall_(room_p), timer_(sock.get_executor())
 {
@@ -41,12 +41,12 @@ void bw::server::user::join(room_ptr room_p)
 	}
 	room_ = room_p;
 	room_->join(shared_from_this());
-	room_->deliver(wrap(control_msg
+	/*room_->deliver(wrap(control_msg
 		{ 
 			.type = control_msg::join,
 			.id1 = id,
 			.id2 = room_->id 
-		}, message::control));
+		}, message::control));*/
 }
 
 void bw::server::user::leave()
@@ -130,7 +130,7 @@ boost::asio::awaitable<void> bw::server::user::writer()
 	try
 	{
 		std::string write_str;
-		size_t size;
+		size_t size = 0;
 		while (sock.is_open())
 		{
 			if (write_msg_queue.empty())

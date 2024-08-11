@@ -54,9 +54,15 @@
     <ClInclude Include="include\room_info.h">
       <Filter>头文件\room</Filter>
     </ClInclude>
+    <ClInclude Include="include\core.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gamer.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\gamer.cpp">
+    <ClCompile Include="src\user.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -68,5 +74,10 @@
     <ClCompile Include="src\server.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -52,7 +52,7 @@ inline std::string json_format(const std::string& json, const std::string& level
     return result;
 }
 int main(int argc, char** argv) {
-
+    srand(time(0));
 	auto sink1 = std::make_shared<spdlog::sinks::wincolor_stderr_sink_mt>();
 	auto sink2 = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("Logs/log.txt", 1024 * 1024 * 5, 3);
 	std::vector< spdlog::sink_ptr> sinks = { sink1,sink2 };
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 	auto consolelogger = std::make_shared<spdlog::logger>("console", sink1);
 	spdlog::set_default_logger(logger);
 
-	std::shared_ptr<bw::server::hall> hall = std::make_shared<bw::server::hall>(10);
+	std::shared_ptr<bw::server::hall> hall = std::make_shared<bw::server::hall>(5);
 	std::vector<int> ports{ 22222 };
 	/*if (argc == 1) {
 		std::print("Usage:\nserver <port number> [<port number>...]\n");

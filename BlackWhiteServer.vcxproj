@@ -166,6 +166,8 @@
     <ClInclude Include="include\admin.hpp" />
     <ClInclude Include="include\basic_game.hpp" />
     <ClInclude Include="include\basic_user.hpp" />
+    <ClInclude Include="include\core.hpp" />
+    <ClInclude Include="include\gamer.hpp" />
     <ClInclude Include="include\hall.hpp" />
     <ClInclude Include="include\othello.hpp" />
     <ClInclude Include="include\othello_room.hpp" />
@@ -175,10 +177,13 @@
     <ClInclude Include="include\user.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\gamer.cpp" />
+    <ClCompile Include="src\user.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\room.cpp" />
     <ClCompile Include="src\server.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

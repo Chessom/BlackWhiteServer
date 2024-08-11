@@ -126,7 +126,10 @@ namespace bw::server {
 					}
 					else if (con_m.target_type == control_msg::r) {
 						room_info rinfo;
-						if (rooms[con_m.id2]->owner == con_m.id1 || find_user(con_m.id1)->authority == user::admin) {
+						if (!(con_m.id2 > 0 && con_m.id2 < rooms.size())) {
+							ret = wrap(ret_msg{ .value = failed,.ret_str = "Room not found" }, msg_t::ret);
+						}
+						else if (rooms[con_m.id2]->owner == con_m.id1 || find_user(con_m.id1)->authority == user::admin) {
 							struct_json::from_json(rinfo, con_m.content);
 							rooms[con_m.id2]->load_info(rinfo);
 							ret = wrap(ret_msg{ .value = success }, msg_t::ret);
@@ -143,7 +146,7 @@ namespace bw::server {
 				else if (con_m.type == control_msg::del) {
 					msg_t ret;
 					if (con_m.target_type == control_msg::r) {
-						if (find_user(con_m.id1)->authority == user::admin) {
+						if (con_m.id2 > 0 && con_m.id2 < rooms.size() && find_user(con_m.id1)->authority == user::admin) {
 							auto& temp_room_p = rooms[con_m.id2];
 							if (temp_room_p != nullptr) {
 								temp_room_p->dissolve();
@@ -152,22 +155,22 @@ namespace bw::server {
 							}
 							else
 							{
-								ret = wrap(ret_msg{ .value = failed,.ret_str = "Room not exist" }, msg_t::ret);
+								ret = wrap(ret_msg{ .value = failed,.ret_type = "operation_failed", .ret_str = "Room not exist" }, msg_t::ret);
 							}
 						}
 						else {
-							if (rooms[con_m.id2] != nullptr) {
+							if (con_m.id2 > 0 && con_m.id2 < rooms.size() && rooms[con_m.id2] != nullptr) {
 								if (rooms[con_m.id2]->owner == con_m.id1) {
 									rooms[con_m.id2]->dissolve();
 									rooms[con_m.id2] = nullptr;
 									ret = msg;
 								}
 								else {
-									ret = wrap(ret_msg{ .value = failed,.ret_str = "No permission" }, msg_t::ret);
+									ret = wrap(ret_msg{ .value = failed,.ret_type = "operation_failed",.ret_str = "No permission" }, msg_t::ret);
 								}
 							}
 							else {
-								ret = wrap(ret_msg{ .value = failed,.ret_str = "Room not exist" }, msg_t::ret);
+								ret = wrap(ret_msg{ .value = failed,.ret_type = "operation_failed",.ret_str = "Room not exist" }, msg_t::ret);
 							}
 						}
 					}
@@ -186,7 +189,7 @@ namespace bw::server {
 						}
 						else if (auto g = find_user(con_m.id1); g->authority == user::admin) {
 							temp_p = std::dynamic_pointer_cast<user>(g);
-							temp_p->deliver(wrap(str_msg{ .content = "You have been kicked out of server!",.id1 = sender->id }, msg_t::str));
+							temp_p->deliver(wrap(str_msg{ .content = "You have been kicked out of server!",.id1 = sender->id,.name = sender->name }, msg_t::str));
 							if (temp_p->in_hall()) {
 								temp_p->leave();
 							}
@@ -196,17 +199,40 @@ namespace bw::server {
 							}
 						}
 						else {
-							ret = wrap(ret_msg{ .value = failed,.ret_str = "No permission" }, msg_t::ret);
+							ret = wrap(ret_msg{ .value = failed,.ret_type = "operation_failed",.ret_str = "No permission" }, msg_t::ret);
 						}
 					}
 					else {
-						ret = wrap(ret_msg{ .value = failed,.ret_str = "Invalid target type" }, msg_t::ret);
+						ret = wrap(ret_msg{ .value = failed,.ret_type = "operation_failed",.ret_str = "Invalid target type" }, msg_t::ret);
 					}
 				}
 				else if (con_m.type == control_msg::join) {
 					auto gp = std::dynamic_pointer_cast<user>(find_user(con_m.id1));
-					gp->join(rooms[con_m.id2]);
-					sender->deliver(msg);
+					if (!(con_m.id2 > 0 && con_m.id2 < rooms.size())) {
+						sender->deliver(wrap(
+							ret_msg{
+								.value = failed,
+								.ret_type = "join_room_failed",
+								.ret_str = "Room not found"
+							},
+							msg_t::ret
+						));	
+					}else if(!gp->in_hall()){
+						sender->deliver(wrap(
+							ret_msg{
+								.value = failed,
+								.ret_type = "join_room_failed",
+								.ret_str = "Already in a room"
+							},
+							msg_t::ret
+						));
+					}
+					else {
+						gp->join(rooms[con_m.id2]);
+						con_m.content = "";
+						struct_json::to_json(static_cast<room_info>(*rooms[con_m.id2]), con_m.content);
+						sender->deliver(wrap(con_m, msg_t::control));
+					}
 				}
 				else if (con_m.type == control_msg::leave) {
 					auto gp = std::dynamic_pointer_cast<user>(find_user(con_m.id1));
@@ -218,7 +244,7 @@ namespace bw::server {
 				}
 				else {
 					sender->deliver(wrap(ret_msg{ .value = failed,.ret_str = "FATAL:Data structure damaged" }, msg_t::ret));
-					spdlog::error("Data structure damaged;id:{}", con_m.id1);
+					spdlog::error("Data structure damaged; id:{} msg:{}", con_m.id1, msg.jsonstr);
 				}
 			}
 			else if (type == msg_t::str) {
@@ -259,7 +285,36 @@ namespace bw::server {
 				get_msg gmsg;
 				struct_json::from_json(gmsg, msg.jsonstr);
 				ret_msg ret;
-				if (gmsg.get_type == "room_info") {
+				if (gmsg.get_type == "current_room_info") {
+					std::vector<room_info> infos;
+					if (!sender->in_hall()) {
+						infos.push_back(static_cast<room_info>(*sender->current_room()));
+						struct_json::to_json(infos, ret.ret_str);
+						ret.value = success;
+						ret.ret_type = "current_room_info";
+					}
+					else {
+						ret.value = failed;
+						ret.ret_type = "current_room_info";
+						ret.ret_str = "Not in any room";
+					}
+				}
+				else if (gmsg.get_type == "search_room_info") {
+					std::vector<room_info> infos;
+					int search_id = gmsg.ids.front();
+					if (search_id > 0 && search_id < rooms.size()) {
+						infos.push_back(static_cast<room_info>(*rooms.at(search_id)));
+						struct_json::to_json(infos, ret.ret_str);
+						ret.value = success;
+						ret.ret_type = "search_room_info";
+					} 
+					else {
+						ret.value = failed;
+						ret.ret_type = "search_room_info";
+						ret.ret_str = "Room not found";
+					}
+				}
+				else if (gmsg.get_type == "room_info") {
 					std::vector<room_info> infos;
 					infos.push_back(static_cast<room_info>(*sender->current_room()));
 					if (gmsg.ids.empty()) {
@@ -270,7 +325,12 @@ namespace bw::server {
 					}
 					else {
 						for (auto& rid : gmsg.ids) {
-							infos.push_back(static_cast<room_info>(*rooms[rid]));
+							if (rid > 0 && rid < rooms.size()) {
+								infos.push_back(static_cast<room_info>(*rooms[rid]));
+							}
+							else {
+								infos.push_back(room_info(0));
+							}
 						}
 					}
 					struct_json::to_json(infos, ret.ret_str);
@@ -280,11 +340,20 @@ namespace bw::server {
 				else if (gmsg.get_type == "user_info") {
 					std::vector<basic_user> infos;
 					for (auto& gid : gmsg.ids) {
-						infos.push_back(*find_user(gid));
+						if (auto gp = find_user(gid); gp != nullptr) {
+							infos.push_back(*gp);
+						}
 					}
-					iguana::to_json(infos, ret.ret_str);
-					ret.value = success;
-					ret.ret_type = "user_info";
+					if (!infos.empty()) {
+						struct_json::to_json(infos, ret.ret_str);
+						ret.value = success;
+						ret.ret_type = "user_info";
+					}
+					else {
+						ret.value = failed;
+						ret.ret_type = "get_falied";
+						ret.ret_str = "User not found";
+					}
 				}
 				else if (gmsg.get_type == "notices") {
 					struct_json::to_json(msg_queue, ret.ret_str);
