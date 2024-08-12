@@ -9,6 +9,7 @@ namespace bw::server {
 		room() = default;
 		room(int room_id, std::string room_name = "Default") :room_info{ room_id, 0, room_name, none } {};
 		virtual void deliver(const message& msg);
+		void deliver_gamers(const message& msg);
 		bool is_default() const {
 			return id == server_id;
 		}
@@ -23,14 +24,15 @@ namespace bw::server {
 		virtual ~room() = default;
 	protected:
 		std::deque<message> msg_queue;
-		boost::container::flat_map<std::string, std::list<basic_user_ptr>> user_matching;
+		boost::container::flat_map<std::string, std::set<basic_user_ptr>> user_matching;
 		boost::container::flat_map<int, game_msg> prepare_msgs;
 		std::set<basic_user_ptr> gaming_users;
+		std::deque<message> game_msg_queue;
 		//std::unordered_map<game::game_setting, int> user_matching;
 		enum { max_msg_num = 500 };
-	private:
+		void two_gamer_init(std::set<basic_user_ptr>&);
 		void end_game(int);
-		
+	private:
 	};
 
 	using room_ptr = std::shared_ptr<room>;

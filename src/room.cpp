@@ -12,6 +12,13 @@ void bw::server::room::deliver(const message& msg)
 	}
 }
 
+void bw::server::room::deliver_gamers(const message& msg) {
+	game_msg_queue.push_back(msg);
+	for (auto& g : gaming_users) {
+		g->deliver(msg);
+	}
+}
+
 void bw::server::room::join(basic_user_ptr p) {
 	if (owner == 0) {
 		owner = p->id;
@@ -42,6 +49,9 @@ void bw::server::room::leave(basic_user_ptr p) {
 	else if (p->state == user_st::gaming) {
 		gaming_users.erase(p);
 		end_game(game_msg::gamer_quit_or_disconnect);
+	}
+	else if (p->state == user_st::watching) {
+		gaming_users.erase(p);
 	}
 	if (id != 0 && usersize == 0) {
 		msg_queue.clear();
@@ -80,6 +90,15 @@ void bw::server::room::load_info(const room_info& info)
 	state = info.state;
 }
 
+static bool is_two_gamer_game(std::string board_str) {
+	for (int i = 0; i < board_str.size(); ++i) {
+		if (board_str[i] == ' ') {
+			auto game_type = board_str.substr(0, i);
+			return game_type == "othello" || game_type == "tictactoe" || game_type == "ataxx" || game_type == "gobang";
+		}
+	}
+}
+
 void bw::server::room::handle_msg(basic_user_ptr gptr, const msg_t& msg){
 	if (msg.type == msg_t::game) {
 		game_msg gmsg;
@@ -88,66 +107,33 @@ void bw::server::room::handle_msg(basic_user_ptr gptr, const msg_t& msg){
 		case game_msg::prepare://暂时先实现只有两个人的联机
 			prepare_msgs[gptr->id] = gmsg;
 			if (state == end || state == none) {
-				auto& user_list = user_matching[gmsg.board];
-				if ( user_list.size() != 0 && user_list.front()->id != gptr->id) {//组成两人联机
-					basic_user_ptr op = user_list.front();
-					game_msg op_msg = prepare_msgs[user_list.front()->id];
+				auto& user_set = user_matching[gmsg.board];
+				user_set.insert(gptr);
+				prepare_msgs[gptr->id] = gmsg;
 
-					core::color c = rand() % 2;
-
-					basic_gamer_info info;
-					struct_json::from_json(info, gmsg.movestr);
-					info.col = c;
-					gmsg.movestr = "";
-					struct_json::to_json(info, gmsg.movestr);
-					msg_t new_msg = wrap(gmsg, msg_t::game);
-
-					basic_gamer_info op_info;
-					struct_json::from_json(op_info, op_msg.movestr);
-					op_info.col = core::op_col(c);
-					op_msg.movestr = "";
-					struct_json::to_json(op_info, op_msg.movestr);
-					msg_t new_opmsg = wrap(op_msg, msg_t::game);
-
-					op->deliver(new_msg);
-					op->deliver(new_opmsg);
-					gptr->deliver(new_msg);
-					gptr->deliver(new_opmsg);
-
-					auto start_msg = wrap(game_msg{
-						.type = game_msg::start,
-						.board = gmsg.board,
-					}, msg_t::game);
-					op->deliver(start_msg);
-					gptr->deliver(start_msg);
-					user_list.pop_front();
-
-					gaming_users.insert({ op,gptr });
-					op->state = user_st::gaming;
-					gptr->state = user_st::gaming;
-					state = gaming;
-					spdlog::info("gamer {} and {} start a(an) {} game", gptr->name, op->name, gmsg.board);
+				if (user_set.size() == 2) {//组成两人联机
+					two_gamer_init(user_set);
 				}
 				else {
-					user_list.push_back(gptr);
-					prepare_msgs[gptr->id] = gmsg;
 					gptr->state = user_st::prepared;
-
 				}
 			}
 			break;
-		case game_msg::start:
+		case game_msg::watch:
+			gaming_users.insert(gptr);
+			gptr->state = user_st::watching;
+			gptr->deliver(msg);
+			for (auto& pre_msg : game_msg_queue) {
+				gptr->deliver(pre_msg);
+			}
+			break;
+		case game_msg::start://暂时无用
 			if (state == prepared) {
-				prepared_users = 0;
 				state = gaming;
 			}
 			break;
 		case game_msg::move:
-			for (auto& gp : gaming_users) {
-				if (gp->id != gptr->id) {
-					gp->deliver(msg);
-				}
-			}
+			deliver_gamers(msg);
 			break;
 		case game_msg::end:
 			state = end;
@@ -156,11 +142,56 @@ void bw::server::room::handle_msg(basic_user_ptr gptr, const msg_t& msg){
 				gp->state = user_st::free;
 			}
 			gaming_users.clear();
+			game_msg_queue.clear();
 			break;
 		default:
 			std::unreachable();
 		}
 	}
+}
+
+void bw::server::room::two_gamer_init(std::set<basic_user_ptr>& user_set)
+{
+	auto iter = user_set.begin();
+	basic_user_ptr u0 = *iter;
+	++iter;
+	basic_user_ptr u1 = *iter;
+
+	gaming_users.insert_range(user_set);
+
+	game_msg msg0 = prepare_msgs[u0->id];
+	game_msg msg1 = prepare_msgs[u1->id];
+
+	core::color c = rand() % 2;
+
+	basic_gamer_info info1;
+	struct_json::from_json(info1, msg1.movestr);
+	info1.col = c;
+	msg1.movestr = "";
+	struct_json::to_json(info1, msg1.movestr);
+	msg_t new_msg1 = wrap(msg1, msg_t::game);
+
+	basic_gamer_info info0;
+	struct_json::from_json(info0, msg0.movestr);
+	info0.col = core::op_col(c);
+	msg0.movestr = "";
+	struct_json::to_json(info0, msg0.movestr);
+	msg_t new_msg0 = wrap(msg0, msg_t::game);
+
+	deliver_gamers(new_msg1);
+	deliver_gamers(new_msg0);
+
+	auto start_msg = wrap(game_msg{
+		.type = game_msg::start,
+		.board = msg1.board,
+		}, msg_t::game);
+	deliver_gamers(start_msg);
+	user_set.clear();
+
+	u0->state = user_st::gaming;
+	u1->state = user_st::gaming;
+	state = gaming;
+	spdlog::info("gamer {} and {} start a(an) {} game", u1->name, u0->name, msg1.board);
 }
 
 void bw::server::room::end_game(int code) {
@@ -179,5 +210,6 @@ void bw::server::room::end_game(int code) {
 		gp->state = user_st::free;
 	}
 	gaming_users.clear();
+	game_msg_queue.clear();
 	state = end;
 }

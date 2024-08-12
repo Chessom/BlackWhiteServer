@@ -9,7 +9,7 @@ namespace bw::server {
 			context_ptr_(std::make_shared<boost::asio::io_context>()){
 			for (int i = 1; i <= default_room_n; ++i) {
 				rooms[i] = std::make_shared<room>(i);
-				dissolved_room_id.push(i);
+				dissolved_room_id.insert(i);
 			}
 		}
 		void start(const std::vector<int>& ports){
@@ -32,8 +32,8 @@ namespace bw::server {
 		int create_room(std::string room_name) {
 			int newid = -1;
 			if (!dissolved_room_id.empty()) {
-				newid = dissolved_room_id.top();
-				dissolved_room_id.pop();
+				newid = *dissolved_room_id.begin();
+				dissolved_room_id.erase(newid);
 				rooms[newid] = std::make_shared<room>(newid, room_name);
 				return newid;
 			}
@@ -46,8 +46,8 @@ namespace bw::server {
 		int distribute_user_id() {
 			int newid = -1;
 			if (!user_id_left.empty()) {
-				newid = user_id_left.top();
-				user_id_left.pop();
+				newid = *user_id_left.begin();
+				user_id_left.erase(newid);
 			}
 			else {
 				newid = users.size() + 1;
@@ -62,7 +62,7 @@ namespace bw::server {
 			if (rooms[room_id]) {
 				rooms[room_id]->dissolve();
 				rooms[room_id] = nullptr;
-				dissolved_room_id.push(room_id);
+				dissolved_room_id.insert(room_id);
 				return 0;
 			}
 		}
@@ -208,7 +208,7 @@ namespace bw::server {
 				}
 				else if (con_m.type == control_msg::join) {
 					auto gp = std::dynamic_pointer_cast<user>(find_user(con_m.id1));
-					if (!(con_m.id2 > 0 && con_m.id2 < rooms.size())) {
+					if (!(con_m.id2 > 0 && con_m.id2 < rooms.size())) {//错误的ID
 						sender->deliver(wrap(
 							ret_msg{
 								.value = failed,
@@ -217,7 +217,8 @@ namespace bw::server {
 							},
 							msg_t::ret
 						));	
-					}else if(!gp->in_hall()){
+					}
+					else if(!gp->in_hall()){
 						sender->deliver(wrap(
 							ret_msg{
 								.value = failed,
@@ -272,14 +273,22 @@ namespace bw::server {
 				if (!sender->in_hall()) {
 					sender->current_room()->handle_msg(sender, msg);
 				}
-				/*game_msg gmsg;
-				struct_json::from_json(gmsg, msg.jsonstr);
-				if (!sender->in_hall()) {
-					auto st = sender->current_room()->state;
-					if (st == room_info::prepared || st == room_info::gaming) {
-						sender->broadcast(wrap(gmsg, msg_t::game));
-					}
-				}*/
+				else {
+					/*room_ptr new_room = rooms[create_room("Default")];
+					sender->join(new_room);
+					control_msg con_m;
+					struct_json::to_json(static_cast<room_info>(*new_room), con_m.content);
+					sender->deliver(wrap(con_m, msg_t::control));
+					sender->current_room()->handle_msg(sender, msg);*/
+					sender->deliver(wrap(
+						ret_msg{
+							.value = failed,
+							.ret_type = "match_failed",
+							.ret_str = "You can only match in a room."
+						},
+						msg_t::ret
+					));
+				}
 			}
 			else if (type == msg_t::get) {
 				get_msg gmsg;
@@ -371,7 +380,7 @@ namespace bw::server {
 			}
 		}
 		virtual void leave(basic_user_ptr p) override {
-			user_id_left.push(p->id);
+			user_id_left.insert(p->id);
 			room::leave(p);
 		}
 		void notice(std::string s) {
@@ -394,7 +403,7 @@ namespace bw::server {
 		}
 
 		std::vector<room_ptr> rooms;
-		std::priority_queue<int> dissolved_room_id, user_id_left;
+		std::set<int> user_id_left, dissolved_room_id;
 		std::shared_ptr<boost::asio::io_context> context_ptr_;
 	};
 }

@@ -9,7 +9,6 @@ namespace bw::server {
 		std::string name = "Default";
 		int state = none;
 		int usersize = 0;
-		int prepared_users = 0;
 		enum { gaming, end, prepared, none };
 		virtual ~room_info() = default;
 	};

@@ -3,7 +3,7 @@
 #include<print>
 namespace bw::server {
 	namespace user_st {
-		enum { prepared, gaming, free };
+		enum { prepared, gaming, free, watching };
 	}
 	class basic_user {
 	public:

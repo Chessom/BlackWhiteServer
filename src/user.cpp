@@ -58,12 +58,12 @@ void bw::server::user::leave()
 		stop();
 		return;
 	}
-	room_->deliver(wrap(control_msg
+	/*room_->deliver(wrap(control_msg
 		{
 			.type = control_msg::leave,
 			.id1 = id,
 			.id2 = room_->id 
-		}, msg_t::control));
+		}, msg_t::control));*/
 	room_->leave(p);
 	room_ = hall_;
 }

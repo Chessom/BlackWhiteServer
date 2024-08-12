@@ -13,40 +13,25 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\games">
-      <UniqueIdentifier>{0dd23f84-89c5-4138-b97e-4d483297a872}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\room">
       <UniqueIdentifier>{cc7d3e79-03a7-4b98-a65b-2d11dfc572d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\user">
+      <UniqueIdentifier>{f511d530-1e89-4f1f-a930-c968f09b453b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\external">
+      <UniqueIdentifier>{43991b45-3d5b-46c5-8b72-dec5317a870d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\BlackWhite\include\net\message.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\admin.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\basic_user.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\hall.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\othello_room.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\stdafx.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\user.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\basic_game.hpp">
-      <Filter>头文件\games</Filter>
-    </ClInclude>
-    <ClInclude Include="include\othello.hpp">
-      <Filter>头文件\games</Filter>
     </ClInclude>
     <ClInclude Include="include\room.h">
       <Filter>头文件\room</Filter>
@@ -54,11 +39,20 @@
     <ClInclude Include="include\room_info.h">
       <Filter>头文件\room</Filter>
     </ClInclude>
+    <ClInclude Include="include\user.h">
+      <Filter>头文件\user</Filter>
+    </ClInclude>
+    <ClInclude Include="include\basic_user.hpp">
+      <Filter>头文件\user</Filter>
+    </ClInclude>
     <ClInclude Include="include\core.hpp">
-      <Filter>头文件</Filter>
+      <Filter>头文件\external</Filter>
     </ClInclude>
     <ClInclude Include="include\gamer.hpp">
-      <Filter>头文件</Filter>
+      <Filter>头文件\external</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BlackWhite\include\net\message.hpp">
+      <Filter>头文件\external</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -164,13 +164,10 @@
   <ItemGroup>
     <ClInclude Include="..\BlackWhite\include\net\message.hpp" />
     <ClInclude Include="include\admin.hpp" />
-    <ClInclude Include="include\basic_game.hpp" />
     <ClInclude Include="include\basic_user.hpp" />
     <ClInclude Include="include\core.hpp" />
     <ClInclude Include="include\gamer.hpp" />
     <ClInclude Include="include\hall.hpp" />
-    <ClInclude Include="include\othello.hpp" />
-    <ClInclude Include="include\othello_room.hpp" />
     <ClInclude Include="include\room.h" />
     <ClInclude Include="include\room_info.h" />
     <ClInclude Include="include\stdafx.h" />
