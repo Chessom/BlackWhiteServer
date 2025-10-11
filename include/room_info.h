@@ -13,5 +13,5 @@ namespace bw::server {
 		virtual ~room_info() = default;
 	};
 	enum { hall_id = 0 };
-	REFLECTION(room_info, id, owner, name, state, usersize);
+	YLT_REFL(room_info, id, owner, name, state, usersize);
 }

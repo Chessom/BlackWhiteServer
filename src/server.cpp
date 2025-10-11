@@ -52,6 +52,9 @@ inline std::string json_format(const std::string& json, const std::string& level
     return result;
 }
 int main(int argc, char** argv) {
+#ifdef _WIN32
+    SetConsoleCP(65001);
+#endif
     srand(time(0));
 	auto sink1 = std::make_shared<spdlog::sinks::wincolor_stderr_sink_mt>();
 	auto sink2 = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("Logs/log.txt", 1024 * 1024 * 5, 3);

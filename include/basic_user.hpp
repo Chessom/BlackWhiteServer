@@ -25,5 +25,5 @@ namespace bw::server {
 		enum { admin, ordinary, anonymous, limited };
 	};
 	using basic_user_ptr = std::shared_ptr<basic_user>;
-	REFLECTION(basic_user, name, id, state, authority);
+	YLT_REFL(basic_user, name, id, state, authority);
 }
